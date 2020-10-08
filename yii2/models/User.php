@@ -2,38 +2,74 @@
 
 namespace app\models;
 
-class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
+use Yii;
+
+/**
+ * This is the model class for table "user".
+ *
+ * @property int $id
+ * @property int|null $id_number
+ * @property int $id_role
+ * @property int|null $id_image
+ * @property string $full_name
+ * @property string $username
+ * @property string $email
+ * @property string $password
+ *
+ * @property Image $image
+ * @property Number $number
+ * @property Role $role
+ */
+class User extends \yii\db\ActiveRecord implements
+    \yii\web\IdentityInterface
 {
-    public $id;
-    public $username;
-    public $password;
-    public $authKey;
-    public $accessToken;
-
-    private static $users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            'password' => 'admin',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            'password' => 'demo',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
-
+    /**
+     * {@inheritdoc}
+     */
+    public static function tableName()
+    {
+        return 'user';
+    }
 
     /**
      * {@inheritdoc}
      */
+    public function rules()
+    {
+        return [
+            [['id_number', 'id_role', 'id_image'], 'integer'],
+            [['full_name', 'username', 'email', 'password'], 'required'],
+            [['full_name', 'username'], 'string', 'max' => 150],
+            [['email'], 'string', 'max' => 140],
+            [['password'], 'string', 'max' => 255],
+            [['username'], 'unique'],
+            [['id_role'],'default', 'value' => 1],
+            [['email'], 'unique'],
+            [['id_image'], 'exist', 'skipOnError' => true, 'targetClass' => Image::className(), 'targetAttribute' => ['id_image' => 'id']],
+            [['id_number'], 'exist', 'skipOnError' => true, 'targetClass' => Number::className(), 'targetAttribute' => ['id_number' => 'id']],
+            [['id_role'], 'exist', 'skipOnError' => true, 'targetClass' => Role::className(), 'targetAttribute' => ['id_role' => 'id']],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'id_number' => 'Id Number',
+            'id_role' => 'Id Role',
+            'id_image' => 'Id Image',
+            'full_name' => 'ФИО',
+            'username' => 'Логин',
+            'email' => 'Email',
+            'password' => 'Пароль',
+        ];
+    }
     public static function findIdentity($id)
     {
-        return isset(self::$users[$id]) ? new static(self::$users[$id]) : null;
+        return static::findOne($id);
     }
 
     /**
@@ -41,12 +77,6 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public static function findIdentityByAccessToken($token, $type = null)
     {
-        foreach (self::$users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
         return null;
     }
 
@@ -58,13 +88,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public static function findByUsername($username)
     {
-        foreach (self::$users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return  User::findOne(['username' => $username]);
     }
 
     /**
@@ -80,7 +104,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public function getAuthKey()
     {
-        return $this->authKey;
+        return null;
     }
 
     /**
@@ -88,7 +112,7 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public function validateAuthKey($authKey)
     {
-        return $this->authKey === $authKey;
+        return false;
     }
 
     /**
@@ -100,5 +124,35 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
     public function validatePassword($password)
     {
         return $this->password === $password;
+    }
+
+    /**
+     * Gets query for [[Image]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getImage()
+    {
+        return $this->hasOne(Image::className(), ['id' => 'id_image']);
+    }
+
+    /**
+     * Gets query for [[Number]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getNumber()
+    {
+        return $this->hasOne(Number::className(), ['id' => 'id_number']);
+    }
+
+    /**
+     * Gets query for [[Role]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRole()
+    {
+        return $this->hasOne(Role::className(), ['id' => 'id_role']);
     }
 }

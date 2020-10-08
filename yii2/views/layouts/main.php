@@ -5,10 +5,11 @@
 
 use app\widgets\Alert;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
+use yii\bootstrap4\Nav;
+use yii\bootstrap4\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use yii\widgets\Pjax;
 
 AppAsset::register($this);
 ?>
@@ -32,28 +33,29 @@ AppAsset::register($this);
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar-inverse navbar-fixed-top',
+            'class' => 'navbar navbar-expand-lg navbar-light bg-light',
         ],
     ]);
     echo Nav::widget([
-        'options' => ['class' => 'navbar-nav navbar-right'],
+
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
+            ['label' => 'Главная', 'url' => ['/site/index']],
+
+
+            ['label' => 'Обратная связь', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
+                ['label' => 'Авторизация','options' => ['id' => 'btn-login'], ]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
-                    'Logout (' . Yii::$app->user->identity->username . ')',
+                    'Выйти (' . Yii::$app->user->identity->username . ')',
                     ['class' => 'btn btn-link logout']
                 )
                 . Html::endForm()
                 . '</li>'
             )
-        ],
+        ],'options' => ['class' => 'navbar-nav navbar-right', 'id' => 'knopka'],
     ]);
     NavBar::end();
     ?>
@@ -69,11 +71,50 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; My Company <?= date('Y') ?></p>
+        <p class="pull-left">&copy; AdminPanel <?= date('d:M:Y') ?></p>
 
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
+<?php Pjax::begin([
+    'enablePushState' => false,
+]); ?>
+<div class="modal fade" id="modal-lg" style="padding-right: 17px; display: none;" aria-modal="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Large Modal</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>One fine body…</p>
+            </div>
+
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<?php Pjax::end(); ?>
+<?php Pjax::begin([
+    'enablePushState' => false,
+]); ?>
+<?php $this->registerJs("
+$('#btn-login').on('click',function(){
+   var data = $(this).data();
+   $('#modal-lg').modal('show');
+   $('#modal-lg').find('.modal-title').text('Авторизация');
+   $('#modal-lg').find('.modal-body').load('/site/login');
+   
+});
+
+");
+
+?>
+<?php Pjax::end(); ?>
 
 <?php $this->endBody() ?>
 </body>
