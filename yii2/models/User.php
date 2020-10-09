@@ -43,11 +43,17 @@ class User extends \yii\db\ActiveRecord implements
             [['email'], 'string', 'max' => 140],
             [['password'], 'string', 'max' => 255],
             [['username'], 'unique'],
-            [['id_role'],'default', 'value' => 1],
             [['email'], 'unique'],
             [['id_image'], 'exist', 'skipOnError' => true, 'targetClass' => Image::className(), 'targetAttribute' => ['id_image' => 'id']],
             [['id_number'], 'exist', 'skipOnError' => true, 'targetClass' => Number::className(), 'targetAttribute' => ['id_number' => 'id']],
             [['id_role'], 'exist', 'skipOnError' => true, 'targetClass' => Role::className(), 'targetAttribute' => ['id_role' => 'id']],
+            //custom rule
+            [['email'], 'email'],
+            [['id_role'],'default', 'value' => 1],
+            ['full_name', 'match', 'pattern' => '/^[a-zA-Zа-яА-Я -]*$/u',
+                'message' => 'ФИО доступно только на русском-английском языках'],
+            ['username', 'match', 'pattern' => '/^[a-zA-Z]\w*$/u',
+                'message' => 'Введите латинские символы'],
         ];
     }
 

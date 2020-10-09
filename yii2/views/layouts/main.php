@@ -44,7 +44,7 @@ AppAsset::register($this);
 
             ['label' => 'Обратная связь', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (
-                ['label' => 'Авторизация','options' => ['id' => 'btn-login'], ]
+                ['label' => 'Авторизация','options' => ['id' => 'btn-login']  ]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
@@ -61,6 +61,7 @@ AppAsset::register($this);
     ?>
 
     <div class="container">
+
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
@@ -76,38 +77,26 @@ AppAsset::register($this);
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
-<?php Pjax::begin([
-    'enablePushState' => false,
-]); ?>
-<div class="modal fade" id="modal-lg" style="padding-right: 17px; display: none;" aria-modal="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Large Modal</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>One fine body…</p>
-            </div>
+<?php
+yii\bootstrap\Modal::begin([
+    'id' => 'modal',
+    'size' => 'modal-md',
+]);
 
+?>
+<div id='modal-content'>Загружаю...</div>
+<?php yii\bootstrap\Modal::end(); ?>
 
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
-</div>
-<?php Pjax::end(); ?>
 <?php Pjax::begin([
     'enablePushState' => false,
 ]); ?>
 <?php $this->registerJs("
 $('#btn-login').on('click',function(){
    var data = $(this).data();
-   $('#modal-lg').modal('show');
-   $('#modal-lg').find('.modal-title').text('Авторизация');
-   $('#modal-lg').find('.modal-body').load('/site/login');
+   $('#modal').modal('show');
+   $('#modal').find('.modal-title').text('Авторизация');
+   $('#modal').find('#modal-content').load('/site/login');
+   
    
 });
 
