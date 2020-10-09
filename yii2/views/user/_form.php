@@ -8,23 +8,41 @@ use yii\widgets\ActiveForm;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="user-form">
-
-    <?php $form = ActiveForm::begin(); ?>
-
-
-    <?= $form->field($model, 'full_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'password')->passwordInput(['maxlength' => true]) ?>
-
-    <div class="form-group">
-        <?= Html::submitButton('Регистрация', ['class' => 'btn btn-success']) ?>
+<?php $form = ActiveForm::begin([
+    'id' => 'registration-form',
+]); ?>
+<div class="form-row">
+    <div class="form-group col-md-6">
+        <?= $form->field($model, 'username', ['enableAjaxValidation' => true])->textInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
+    <div class="form-group col-md-6">
+        <?= $form->field($model, 'password')->passwordInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
+    </div>
 </div>
+<div class="form-group">
+    <?= $form->field($model, 'full_name', ['enableAjaxValidation' => true])->textInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
+</div>
+<div class="form-group">
+    <?= $form->field($model, 'email', ['enableAjaxValidation' => true])->textInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
+</div>
+
+<?= Html::submitButton('Регистрация', ['class' => 'btn btn-primary','disabled' => true,'id' => 'btn-reg2' ]) ?>
+
+<?php ActiveForm::end(); ?>
+
+<?php $this->registerJs("
+function checkParams() {
+    var fio = $('#user-username').val();
+    var email = $('#user-email').val();
+    var password = $('#user-password').val();
+    var full = $('#user-full_name').val();
+
+    if(fio.length != 0 && email.length != 0 && password.length != 0 && full.length != 0) {
+        $('#btn-reg2').removeAttr('disabled');
+    } else {
+        $('#btn-reg2').attr('disabled', 'disabled');
+    }
+}"
+)
+
+?>
