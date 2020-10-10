@@ -131,4 +131,16 @@ class UserController extends Controller
 
         throw new NotFoundHttpException('The requested page does not exist.');
     }
+
+    //new view
+    public function actionPersonalArea()
+    {
+        $user = User::find()
+        ->all();
+
+        return $this->render('lk', [
+            'user' => $user,
+        ]);
+
+    }
 }

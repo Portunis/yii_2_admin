@@ -40,6 +40,7 @@ AppAsset::register($this);
 
         'items' => [
             ['label' => 'Главная', 'url' => ['/site/index']],
+            ['label' => 'Панель администратора', 'url' => ['/admin/index'], 'visible' => !Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin()],
 
 
             ['label' => 'Обратная связь', 'url' => ['/site/contact']],
