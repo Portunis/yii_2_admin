@@ -1,8 +1,8 @@
 <?php
 
 use yii\helpers\Html;
-use yii\widgets\ActiveForm;
 
+use macgyer\yii2materializecss\widgets\form\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model app\models\User */
 /* @var $form yii\widgets\ActiveForm */
@@ -11,20 +11,15 @@ use yii\widgets\ActiveForm;
 <?php $form = ActiveForm::begin([
     'id' => 'registration-form',
 ]); ?>
-<div class="form-row">
-    <div class="form-group col-md-6">
+
         <?= $form->field($model, 'username', ['enableAjaxValidation' => true])->textInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
-    </div>
-    <div class="form-group col-md-6">
+
         <?= $form->field($model, 'password')->passwordInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
-    </div>
-</div>
-<div class="form-group">
+
     <?= $form->field($model, 'full_name', ['enableAjaxValidation' => true])->textInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
-</div>
-<div class="form-group">
+
     <?= $form->field($model, 'email', ['enableAjaxValidation' => true])->textInput(['maxlength' => true, 'onkeyup' => 'checkParams()' ]) ?>
-</div>
+
 
 <?= Html::submitButton('Регистрация', ['class' => 'btn btn-primary','disabled' => true,'id' => 'btn-reg2' ]) ?>
 

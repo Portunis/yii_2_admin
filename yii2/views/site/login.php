@@ -1,11 +1,13 @@
 <?php
 
 /* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
+
 /* @var $model app\models\LoginForm */
 
+use macgyer\yii2materializecss\widgets\form\ActiveForm;
+use macgyer\yii2materializecss\widgets\Modal;
 use yii\helpers\Html;
-use yii\bootstrap\ActiveForm;
+
 use yii\widgets\Pjax;
 
 $this->title = '';
@@ -15,39 +17,36 @@ $this->title = '';
 <?php $form = ActiveForm::begin(
 
 ); ?>
-    <form>
-        <div class="form-group">
+
             <?= $form->field($model, 'username', ['enableAjaxValidation' => true])->textInput(['autofocus' => true, 'onkeyup' => 'checkParams()']) ?>
 
-        </div>
-        <div class="form-group">
-            <?= $form->field($model, 'password', ['enableAjaxValidation' => true])->passwordInput([ 'onkeyup' => 'checkParams()']) ?>
-        </div>
 
-        <?= Html::submitButton('Авторизация', ['class' => 'btn btn-primary', 'name' => 'login-button', 'disabled' => true,'id' => 'btn-auth']) ?> <br>
+
+            <?= $form->field($model, 'password', ['enableAjaxValidation' => true])->passwordInput([ 'onkeyup' => 'checkParams()']) ?>
+
+
+        <?= Html::submitButton('Авторизация', ['class' => 'btn ', 'name' => 'login-button', 'disabled' => true,'id' => 'btn-auth']) ?> <br>
         <small>
             У Вас нет аккаунта ? <a id="btn-reg" href="#"> Регистрация</a>.<br>
 
         </small>
-    </form>
+
 <?php ActiveForm::end(); ?>
-<?php
-yii\bootstrap\Modal::begin([
-
-    'id' => 'modal',
-    'size' => 'modal-md',
-]); ?>
-<div id='modal-content'>Загружаю...</div>
-<?php yii\bootstrap\Modal::end(); ?>
-
 <?php Pjax::begin([
     'enablePushState' => false,
 ]); ?>
+<?php
+Modal::begin([
+        'toggleButton' => false,
+]); ?>
+<?php Modal::end(); ?>
+
+
 <?php $this->registerJs("
 $('#btn-reg').on('click',function(){
-   var data = $(this).data();
-   $('#modal').find('.modal-title').text('Регистрация');
-   $('#modal').find('#modal-content').load('/user/create');
+  var data = $(this).data();
+  $('.modal').find('.modal-content').load('/user/create');
+  console.log(123);
    
   
 });

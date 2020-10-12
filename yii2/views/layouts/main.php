@@ -4,9 +4,10 @@
 /* @var $content string */
 
 use app\widgets\Alert;
+use macgyer\yii2materializecss\widgets\Modal;
+use macgyer\yii2materializecss\widgets\navigation\Nav;
+use macgyer\yii2materializecss\widgets\navigation\NavBar;
 use yii\helpers\Html;
-use yii\bootstrap4\Nav;
-use yii\bootstrap4\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 use yii\widgets\Pjax;
@@ -33,7 +34,8 @@ AppAsset::register($this);
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
-            'class' => 'navbar navbar-expand-lg navbar-light bg-light',
+            'class' => 'navbar-fixed nav-wrapper',
+
         ],
     ]);
     echo Nav::widget([
@@ -45,18 +47,18 @@ AppAsset::register($this);
 
             ['label' => 'Обратная связь', 'url' => ['/site/contact']],
             Yii::$app->user->isGuest ? (
-                ['label' => 'Авторизация','options' => ['id' => 'btn-login']  ]
+                ['label' => 'Авторизация','options' => ['id' => 'login', 'class' => 'modal-trigger', 'data-target' => 'w4']  ]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')
                 . Html::submitButton(
-                    'Выйти (' . Yii::$app->user->identity->username . ')',
-                    ['class' => 'btn btn-link logout']
+                    'Выйти (' . Yii::$app->user->identity->username . ')'
+
                 )
                 . Html::endForm()
                 . '</li>'
             )
-        ],'options' => ['class' => 'navbar-nav navbar-right', 'id' => 'knopka'],
+        ],'options' => ['class' => 'right hide-on-med-and-down'],
     ]);
     NavBar::end();
     ?>
@@ -78,26 +80,29 @@ AppAsset::register($this);
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>
-<?php
-yii\bootstrap\Modal::begin([
-    'id' => 'modal',
-    'size' => 'modal-md',
-]);
-
-?>
-<div id='modal-content'>Загружаю...</div>
-<?php yii\bootstrap\Modal::end(); ?>
-
 <?php Pjax::begin([
     'enablePushState' => false,
 ]); ?>
+<?php Modal::begin([
+
+    'closeButtonPosition' => Modal::CLOSE_BUTTON_POSITION_BEFORE_FOOTER,
+    'closeButton' => [
+        'tag' => 'div',
+        'label' => 'Закрыть',
+        'class' => 'light-grey btn btn-flat blue lighten-4'
+    ]
+]) ?>
+
+<?php Modal::end() ?>
+
+
 <?php $this->registerJs("
-$('#btn-login').on('click',function(){
+
+$('#login').on('click',function(){
    var data = $(this).data();
-   $('#modal').modal('show');
-   $('#modal').find('.modal-title').text('Авторизация');
-   $('#modal').find('#modal-content').load('/site/login');
-   
+   $('.modal').modal();
+   $('.modal').find('.modal-content').load('/site/login');
+   console.log(123);
    
 });
 
